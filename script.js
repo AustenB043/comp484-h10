@@ -4,6 +4,20 @@ $(function() { // Ensures our code runs after the DOM is ready
 
   // Use a single generic handler for all action buttons
   $(document).on('click', '.action-button', onActionButtonClick);
+
+  // DevTools JS demo bindings
+  $('#btn-start-timer').on('click', startDemoTimer);
+  $('#btn-stop-timer').on('click', stopDemoTimer);
+  $('#btn-run-sample').on('click', runSampleFunction);
+  $('#btn-throw-error').on('click', throwUncaughtError);
+  $('#btn-throw-caught-error').on('click', throwCaughtError);
+  $('#btn-reject-promise').on('click', rejectUnhandledPromise);
+
+  // DevTools DOM demo bindings
+  $('#btn-add-item').on('click', onAddListItem);
+  $('#btn-update-attr').on('click', onUpdateAttribute);
+  $('#btn-remove-item').on('click', onRemoveLastItem);
+  $('#btn-replace-html').on('click', onReplaceInnerHtml);
 })
 
 // pet_info holds your pet's basic stats
@@ -150,4 +164,133 @@ function setPetImageForAction(action) {
   } else {
     $('.overlay-zzz').hide();
   }
+}
+
+// ===============================
+// DevTools JavaScript Demo Logic
+// ===============================
+
+var demoTimerId = null;
+var demoTick = 0;
+
+function startDemoTimer() {
+  if (demoTimerId !== null) return;
+  logJsDemo("Timer started");
+  demoTimerId = setInterval(tickTimer, 1000);
+}
+
+function stopDemoTimer() {
+  if (demoTimerId === null) return;
+  clearInterval(demoTimerId);
+  demoTimerId = null;
+  logJsDemo("Timer stopped");
+}
+
+function tickTimer() {
+  demoTick += 1;
+  // Call stack demo: tickTimer -> doWorkA -> doWorkB
+  doWorkA(demoTick);
+}
+
+function doWorkA(counter) {
+  // Set a conditional breakpoint here in DevTools: break when counter % 5 === 0
+  doWorkB(counter * 2);
+}
+
+function doWorkB(value) {
+  var computed = value + Math.floor(Math.random() * 10);
+  if (computed % 7 === 0) {
+    // Occasional branch for step-in/over practice
+    logJsDemo("Lucky seven hit: " + computed);
+  } else {
+    logJsDemo("Tick value: " + computed);
+  }
+}
+
+function runSampleFunction() {
+  var payload = { user: "Pico", energy: pet_info.energy, at: Date.now() };
+  // Place a regular breakpoint here to inspect 'payload' and scope values
+  var result = sampleTransform(payload);
+  logJsDemo("Sample result: " + JSON.stringify(result));
+}
+
+function sampleTransform(obj) {
+  // Demonstrate stepping into/out of functions
+  var copy = {
+    name: obj.user,
+    snapshotEnergy: Number(obj.energy || 0),
+    isoTime: new Date(obj.at).toISOString()
+  };
+  // You may also use the 'debugger' statement when needed during the demo:
+  // debugger;
+  return copy;
+}
+
+function throwUncaughtError() {
+  // Uncaught error to show "Pause on exceptions"
+  // eslint-disable-next-line no-undef
+  notDefinedFunctionCall();
+}
+
+function throwCaughtError() {
+  try {
+    JSON.parse("{ bad json");
+  } catch (e) {
+    logJsDemo("Caught error: " + e.message);
+  }
+}
+
+function rejectUnhandledPromise() {
+  // Unhandled Promise rejection to show "Pause on exceptions"
+  Promise.reject(new Error("Demo unhandled rejection at " + new Date().toLocaleTimeString()));
+}
+
+function logJsDemo(message) {
+  var $out = $('#js-demo-output');
+  var time = new Date().toLocaleTimeString();
+  var line = "[" + time + "] " + message;
+  var existing = $out.text();
+  $out.text(existing ? existing + "\n" + line : line);
+}
+
+// ===============================
+// DevTools DOM Demo Logic
+// ===============================
+
+function onAddListItem() {
+  var $list = $('#demo-list');
+  var nextId = ($list.children().length + 1);
+  var $li = $('<li/>')
+    .addClass('demo-item')
+    .attr('data-id', String(nextId))
+    .text('Item #' + nextId);
+  // DOM Subtree Modification breakpoint can pause here
+  $list.append($li);
+}
+
+function onUpdateAttribute() {
+  var $target = $('#dom-target');
+  var newStatus = 'updated-' + Date.now();
+  // DOM Attribute Modification breakpoint can pause here
+  $target.attr('data-status', newStatus);
+  $target.find('.dom-target-value').text('(data-status="' + newStatus + '")');
+}
+
+function onRemoveLastItem() {
+  var $list = $('#demo-list');
+  var $last = $list.children().last();
+  if ($last.length) {
+    // DOM Node Removal breakpoint can pause here
+    $last.remove();
+  }
+}
+
+function onReplaceInnerHtml() {
+  var $list = $('#demo-list');
+  // Large innerHTML replacement for subtree modification demo
+  $list.html(
+    '<li class="demo-item" data-id="1a">Replaced A</li>' +
+    '<li class="demo-item" data-id="2a">Replaced B</li>' +
+    '<li class="demo-item" data-id="3a">Replaced C</li>'
+  );
 }

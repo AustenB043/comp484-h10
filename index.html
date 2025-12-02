@@ -76,6 +76,47 @@
         <div class="pet-comment" aria-live="polite"></div>
       </section>
     </main>
+
+    <!-- DevTools Demo Section -->
+    <section class="devtools-demo" aria-labelledby="devtools-demo-title">
+      <h2 id="devtools-demo-title">DevTools Demos</h2>
+      <p>Use Chrome DevTools to practice JavaScript debugging and DOM breakpoints with the controls below.</p>
+
+      <div class="demo-group">
+        <h3>JavaScript Debugging</h3>
+        <div class="demo-controls">
+          <button type="button" class="demo-btn" id="btn-start-timer">Start Timer</button>
+          <button type="button" class="demo-btn" id="btn-stop-timer">Stop Timer</button>
+          <button type="button" class="demo-btn" id="btn-run-sample">Run Sample Function</button>
+          <button type="button" class="demo-btn" id="btn-throw-error">Throw Uncaught Error</button>
+          <button type="button" class="demo-btn" id="btn-throw-caught-error">Throw Caught Error</button>
+          <button type="button" class="demo-btn" id="btn-reject-promise">Reject Promise</button>
+        </div>
+        <div class="demo-output" id="js-demo-output" aria-live="polite"></div>
+      </div>
+
+      <div class="demo-group">
+        <h3>DOM Mutations</h3>
+        <div class="demo-controls">
+          <button type="button" class="demo-btn" id="btn-add-item">Add List Item</button>
+          <button type="button" class="demo-btn" id="btn-update-attr">Update Attribute</button>
+          <button type="button" class="demo-btn" id="btn-remove-item">Remove Last Item</button>
+          <button type="button" class="demo-btn" id="btn-replace-html">Replace Inner HTML</button>
+        </div>
+
+        <div class="dom-playground">
+          <div class="dom-target" id="dom-target" data-status="initial" role="group" aria-label="DOM Target">
+            <strong>DOM Target</strong>
+            <span class="dom-target-value">(data-status="initial")</span>
+          </div>
+          <ul id="demo-list" class="demo-list">
+            <li class="demo-item" data-id="1">Item #1</li>
+            <li class="demo-item" data-id="2">Item #2</li>
+            <li class="demo-item" data-id="3">Item #3</li>
+          </ul>
+        </div>
+      </div>
+    </section>
     
     <!-- Preloaded audio assets -->
     <audio id="sound-eat" preload="auto" src="sounds/Dog eating sound effect  (no copyright).mp3"></audio>
